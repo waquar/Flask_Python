@@ -1,9 +1,18 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import  SQLAlchemy
 from _datetime import datetime
+import json
+
+localserver = True
+with open('config.json', 'r') as c:
+    params = json.load(c)['params']
 
 app = Flask(__name__)                  #used to connect with flaskalchemy mysql database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/waquar_db'
+if (localserver):
+    app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']     #will change to prod uri in future
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/waquar_db'       #used before using json.config
 db = SQLAlchemy(app)
 
 class Contacts(db.Model):       #contact info in database important(name should match with db wasted 2 hours)
@@ -18,11 +27,11 @@ class Contacts(db.Model):       #contact info in database important(name should 
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', params=params)
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    return render_template('about.html', params=params)
 
 
 @app.route("/contact", methods=['GET', 'POST'])
@@ -37,11 +46,10 @@ def contact():
         db.session.add(entry)
         db.session.commit()
 
-    return render_template('contact.html')
-
+    return render_template('contact.html', params=params)
 
 @app.route('/post')
 def post():
-    return render_template('post.html')
+    return render_template('post.html', params=params)    #used params to use href with fb,tw and git
 
 app.run(debug=True)

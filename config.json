@@ -2,13 +2,14 @@
     "params" :
         {
             "local_server": "True",
-            "local_uri" : "mysql://root:@localhost/waquar_db",
-            "prod_uri" : "mysql://root:@localhost/waquar_db",
+            "local_url" : "mysql://root:@localhost/waquar_db",
+            "prod_url" : "mysql://root:@localhost/waquar_db",
             "fb_url": "https://www.facebook.com/waquarhatesbookface",
             "tw_url": "https://www.facebook.com/waquarhatesbookface",
-            "git_url" : "https://www.github.com/waquar"
+            "git_url" : "https://www.github.com/waquar",
+            "gmail-user" : "sss@gmail.com",
+            "gmail-password" : "sggr123"
         }
-
 
 }
 

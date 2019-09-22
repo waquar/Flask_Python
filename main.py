@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from _datetime import datetime
 import json
-#from flask_mail import Mail
+from flask_mail import Mail
 
 #right now using local server so setting its true.
 localserver = True
@@ -23,8 +23,7 @@ app.config.update(
 )
 
 #function to send mail
-#mail = Mail(app)
-
+mail = Mail(app)
 #checking condition of server its local or prod
 if (localserver):
     app.config['SQLALCHEMY_DATABASE_URI'] = params['local_url']
@@ -46,9 +45,9 @@ class Contacts(db.Model):
 #made for saving posts in db
 class Posts(db.Model):
     sno = db.Column(db.Integer, primary_key=True)
-    tile = db.Column(db.String(80), unique=False, nullable=False)
+    title = db.Column(db.String(180), nullable=False)
     date = db.Column(db.String(120), nullable=True)
-    content = db.Column(db.String(1000), nullable=False)
+    content = db.Column(db.String(10000), nullable=False)
     slug = db.Column(db.String(50), nullable=False)
 
 @app.route('/')
@@ -59,9 +58,13 @@ def home():
 def about():
     return render_template('about.html', params=params)
 
-@app.route('/post/<string:post_slug>', methods=['GET'])
-def post_route(post_slug):
-    post = Posts.query.filter_by(slug=post_slug).first()
+# @app.route('/post/')
+# def post():
+#     return render_template('post.html', params=params)
+
+@app.route("/post/<string:post_slug>", methods=['GET'])
+def newpost(post_slug):
+    post = Posts.query.filter_by(slug = post_slug).first()
     return render_template('post.html', params=params, post = post)
 
 @app.route("/contact", methods=['GET', 'POST'])
@@ -77,8 +80,8 @@ def contact():
         db.session.add(entry)
         db.session.commit()
         #as soon it commits it will send mail to user.
-     #   mail.send_message('Got new message from blog', sender=email,
-     #                     recipients=[params['gmail-user']], body=message+ "\n" + phone)
+        mail.send_message('Got new message from blog', sender=email,
+                          recipients=[params['gmail-user']], body=message+ "\n" + phone)
     return render_template('contact.html', params=params)
 
 app.run(debug=True)

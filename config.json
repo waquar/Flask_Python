@@ -9,7 +9,8 @@
             "git_url" : "https://www.github.com/waquar",
             "gmail-user" : "sss@gmail.com",
             "gmail-password" : "sggr123",
-            "Myself": "Hi! My name is waquar. My favourite line is : We All Are Bad in Someone's Story!!!! "
+            "Myself": "Hi! My name is waquar. My favourite line is : We All Are Bad in Someone's Story!!!! ",
+            "display_posts" : 6
         }
 
 }

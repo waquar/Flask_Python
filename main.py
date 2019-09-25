@@ -46,13 +46,16 @@ class Contacts(db.Model):
 class Posts(db.Model):
     sno = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(180), nullable=False)
+    tagline = db.Column(db.String(10000), nullable=False)
     date = db.Column(db.String(120), nullable=True)
     content = db.Column(db.String(10000), nullable=False)
     slug = db.Column(db.String(50), nullable=False)
 
 @app.route('/')
 def home():
-    return render_template('index.html', params=params)
+    #query to fetch data from db. restricted to posts using params slicing.[0:params['display_posts']]
+    posts = Posts.query.filter_by().all()[0:params['display_posts']]
+    return render_template('index.html', params=params, posts = posts)
 
 @app.route('/about')
 def about():

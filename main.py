@@ -61,6 +61,12 @@ def home():
 def about():
     return render_template('about.html', params=params)
 
+#dashboard
+@app.route('/dashboard')
+def dashboard():
+    return render_template('signin.html', params=params)
+
+
 # @app.route('/post/')
 # def post():
 #     return render_template('post.html', params=params)

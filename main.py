@@ -1,18 +1,22 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 from _datetime import datetime
 import json
 from flask_mail import Mail
 
-#right now using local server so setting its true.
-localserver = True
-
 #reading configs in json.config
 with open('config.json', 'r') as c:
     params = json.load(c)['params']
 
+#right now using local server so setting its true.
+localserver = True
+
 #used to connect with flask alchemy mysql database
 app = Flask(__name__)
+
+#setting secret key
+app.secret_key = 'mysecret_key'
+
 #configuring app to send mails using gmail smtplib
 app.config.update(
     MAIL_SERVER= 'smtp.gmail.com',
@@ -57,15 +61,46 @@ def home():
     posts = Posts.query.filter_by().all()[0:params['display_posts']]
     return render_template('index.html', params=params, posts = posts)
 
+@app.route('/edit/<string:sno>', methods = ['GET', 'POST'])
+def edit(sno):
+    if 'user' in session and session['user'] == params['admin_user']:
+        if request.method == 'POST':
+            req_title = request.form.get('title')
+            req_tagline = request.form.get('tagline')
+            req_slug = request.form.get('slug')
+            req_content= request.form.get('content')
+            req_img = request.form.get('img_file')
+
+            if sno =='0':
+                post = Posts(title = req_title, tagline = req_tagline, slug = req_slug, content = req_content )
+                db.session.add(post)
+                db.session.commit()
+
+        return  render_template('edit.html', params = params)
+
 @app.route('/about')
 def about():
     return render_template('about.html', params=params)
 
 #dashboard
-@app.route('/dashboard')
+@app.route('/dashboard', methods = ['GET', 'POST'])
 def dashboard():
-    return render_template('signin.html', params=params)
+    #checking user already login
+    if 'user' in session and session['user'] == params['admin_user']:
+        posts = Posts.query.all()
+        return render_template('dashboard.html', params=params, posts =posts)
 
+    if request.method=='POST':
+        #we have to redirect to admin panel
+        username = request.form.get('uname')
+        userpass = request.form.get('upass')
+        if username == params['admin_user'] and userpass == params['admin_pass']:
+            #setting session
+            session['user'] = username
+            posts = Posts.query.all()
+            return render_template('dashboard.html', params=params, posts =posts)
+    else:
+        return render_template('signin.html', params=params)
 
 # @app.route('/post/')
 # def post():

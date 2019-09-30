@@ -4,13 +4,16 @@
             "local_server": "True",
             "local_url" : "mysql://root:@localhost/waquar_db",
             "prod_url" : "mysql://root:@localhost/waquar_db",
+            "blog_name" : "waquar's blog",
             "fb_url": "https://www.facebook.com/waquarhatesbookface",
             "tw_url": "https://www.facebook.com/waquarhatesbookface",
             "git_url" : "https://www.github.com/waquar",
             "gmail-user" : "sss@gmail.com",
             "gmail-password" : "sggr123",
             "Myself": "Hi! My name is waquar. My favourite line is : We All Are Bad in Someone's Story!!!! ",
-            "display_posts" : 6
+            "display_posts" : 6,
+            "admin_user": "waquarblog@gmail.com",
+            "admin_pass" : "blogs"
         }
 
 }

@@ -69,14 +69,14 @@ def edit(sno):
             req_tagline = request.form.get('tagline')
             req_slug = request.form.get('slug')
             req_content= request.form.get('content')
-            req_img = request.form.get('img_file')
+            req_date = datetime.now()
 
             if sno =='0':
-                post = Posts(title = req_title, tagline = req_tagline, slug = req_slug, content = req_content )
+                post = Posts(title = req_title, tagline = req_tagline, slug = req_slug, content = req_content, date=req_date )
                 db.session.add(post)
                 db.session.commit()
 
-        return  render_template('edit.html', params = params)
+        return  render_template('edit.html', params = params, sno = sno)
 
 @app.route('/about')
 def about():

@@ -19,8 +19,13 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
+          <h4> Add your posts below matchng the form fields. </h4>
+          <hr>
+          <a href ="/dashboard"  ><button class="btn btn-primary">  Dashboard Home - > <</button> </a>
+          <a href ="/logout"  ><button class="btn btn-primary">  Logout - > <</button> </a>
+          <hr>
     
-        <form name="sentMessage" id="contactForm" action="/edit/{{post.sno}}" method="post" novalidate>
+        <form name="sentMessage" id="contactForm" action="/edit/{{sno}}" method="post" novalidate>
           <div class="control-group">
             <div class="form-group floating-label-form-group controls">
               <label>Title</label>
@@ -45,7 +50,7 @@
           <div class="control-group">
             <div class="form-group floating-label-form-group controls">
               <label>content</label>
-              <textarea class="form-control" placeholder="content" id="content" name="content" required data-validation-required-message="Please enter a message."> value = "{{post.content}}" </textarea>
+              <textarea class="form-control" placeholder="content" id="content" name="content" required data-validation-required-message="Please enter a message."> </textarea>
               <p class="help-block text-danger"></p>
             </div>
           </div>

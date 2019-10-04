@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect,flash
 from flask_sqlalchemy import SQLAlchemy
 from _datetime import datetime
 import json
@@ -61,6 +61,7 @@ def home():
     posts = Posts.query.filter_by().all()[0:params['display_posts']]
     return render_template('index.html', params=params, posts = posts)
 
+# editing the existing posts
 @app.route('/edit/<string:sno>', methods = ['GET', 'POST'])
 def edit(sno):
     if 'user' in session and session['user'] == params['admin_user']:
@@ -88,7 +89,7 @@ def edit(sno):
                 return redirect('/edit/'+ sno)
 
         post = Posts.query.filter_by(sno = sno).first()
-        return  render_template('edit.html', params = params, post = post)
+        return  render_template('edit.html', params = params,sno = sno, post = post)
 
 @app.route('/about')
 def about():
@@ -140,5 +141,21 @@ def contact():
                           recipients=[params['gmail-user']], body=message+ "\n" + phone)
     return render_template('contact.html', params=params)
 
+@app.route("/logout")
+def logout():
+    session.pop('user')
+    return redirect('/dashboard')
+
+@app.route('/delete/<string:sno>', methods = ['GET', 'POST'])
+def delete(sno):
+    if 'user' in session and session['user'] == params['admin_user']:
+        post = Posts.query.filter_by(sno = sno).first()
+        db.session.delete(post)
+        db.session.commit()
+        flash("successfully deleted")
+    
+    return redirect('/dashboard')
+
+    
 app.run(debug=True)
 

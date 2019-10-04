@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from _datetime import datetime
 import json
@@ -71,12 +71,24 @@ def edit(sno):
             req_content= request.form.get('content')
             req_date = datetime.now()
 
+            #logic is if sno is zero then  give user admin access to add new posts,
             if sno =='0':
                 post = Posts(title = req_title, tagline = req_tagline, slug = req_slug, content = req_content, date=req_date )
                 db.session.add(post)
                 db.session.commit()
 
-        return  render_template('edit.html', params = params, sno = sno)
+            else:
+                post = Posts.query.filter_by(sno = sno).first()
+                post.title = req_title
+                post.tagline = req_tagline
+                post.slug = req_slug
+                post.content = req_content
+                post.date = req_date
+                db.session.commit()
+                return redirect('/edit/'+ sno)
+
+        post = Posts.query.filter_by(sno = sno).first()
+        return  render_template('edit.html', params = params, post = post)
 
 @app.route('/about')
 def about():
@@ -89,7 +101,7 @@ def dashboard():
     if 'user' in session and session['user'] == params['admin_user']:
         posts = Posts.query.all()
         return render_template('dashboard.html', params=params, posts =posts)
-
+  
     if request.method=='POST':
         #we have to redirect to admin panel
         username = request.form.get('uname')

@@ -61,6 +61,40 @@ def home():
     posts = Posts.query.filter_by().all()[0:params['display_posts']]
     return render_template('index.html', params=params, posts = posts)
 
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html', params=params)
+
+
+# @app.route('/post/')
+# def post():
+#     return render_template('post.html', params=params)
+
+@app.route("/post/<string:post_slug>", methods=['GET'])
+def newpost(post_slug):
+    post = Posts.query.filter_by(slug = post_slug).first()
+    return render_template('post.html', params=params, post = post)
+
+@app.route("/contact", methods=['GET', 'POST'])
+def contact():
+    # will fetch details from contact form in contact.html, attributes which i configured
+    if request.method == "POST":
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        message = request.form.get('message')
+        # will dump in database
+        entry = Contacts(name=name, mobile=phone, message=message, date=datetime.now(), email=email)
+        db.session.add(entry)
+        db.session.commit()
+        #as soon it commits it will send mail to user.
+        mail.send_message('Got new message from blog', sender=email,
+                          recipients=[params['gmail-user']], body=message+ "\n" + phone)
+    return render_template('contact.html', params=params)
+
+
 # editing the existing posts
 @app.route('/edit/<string:sno>', methods = ['GET', 'POST'])
 def edit(sno):
@@ -91,10 +125,6 @@ def edit(sno):
         post = Posts.query.filter_by(sno = sno).first()
         return  render_template('edit.html', params = params,sno = sno, post = post)
 
-@app.route('/about')
-def about():
-    return render_template('about.html', params=params)
-
 #dashboard
 @app.route('/dashboard', methods = ['GET', 'POST'])
 def dashboard():
@@ -115,36 +145,6 @@ def dashboard():
     else:
         return render_template('signin.html', params=params)
 
-# @app.route('/post/')
-# def post():
-#     return render_template('post.html', params=params)
-
-@app.route("/post/<string:post_slug>", methods=['GET'])
-def newpost(post_slug):
-    post = Posts.query.filter_by(slug = post_slug).first()
-    return render_template('post.html', params=params, post = post)
-
-@app.route("/contact", methods=['GET', 'POST'])
-def contact():
-    # will fetch details from contact form in contact.html, attributes which i configured
-    if request.method == "POST":
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        message = request.form.get('message')
-        # will dump in database
-        entry = Contacts(name=name, mobile=phone, message=message, date=datetime.now(), email=email)
-        db.session.add(entry)
-        db.session.commit()
-        #as soon it commits it will send mail to user.
-        mail.send_message('Got new message from blog', sender=email,
-                          recipients=[params['gmail-user']], body=message+ "\n" + phone)
-    return render_template('contact.html', params=params)
-
-@app.route("/logout")
-def logout():
-    session.pop('user')
-    return redirect('/dashboard')
 
 @app.route('/delete/<string:sno>', methods = ['GET', 'POST'])
 def delete(sno):
@@ -155,6 +155,11 @@ def delete(sno):
         flash("successfully deleted")
     
     return redirect('/dashboard')
+
+@app.route("/logout")
+def logout():
+    session.pop('user')
+    return redirect('/')
 
     
 app.run(debug=True)

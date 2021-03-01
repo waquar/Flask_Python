@@ -106,7 +106,7 @@ def edit(sno):
             req_content= request.form.get('content')
             req_date = datetime.now()
 
-            #logic is if sno is zero then  give user admin access to add new posts,
+            #logic is if sno is zero then,  give user admin access to add new posts,
             if sno =='0':
                 post = Posts(title = req_title, tagline = req_tagline, slug = req_slug, content = req_content, date=req_date )
                 db.session.add(post)
